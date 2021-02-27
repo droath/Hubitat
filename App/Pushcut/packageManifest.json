@@ -3,6 +3,8 @@
   "author": "Travis Tomka",
   "version": "1.0.0",
   "minimumHEVersion": "2.1.9",
+  "documentationLink": "https://github.com/droath/Hubitat",
+  "communityLink": "",
   "dateReleased": "2021-02-27",
   "apps": [
     {
@@ -22,7 +24,6 @@
       "location": "https://raw.githubusercontent.com/droath/Hubitat/master/App/Pushcut/pushcut-notification.groovy",
       "required": true,
       "oauth": true,
-      "primary": false,
       "version": "1.0.0"
     }
   ],
