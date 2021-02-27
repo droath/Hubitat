@@ -1,13 +1,3 @@
-/** For development only. Do not copy to Hubitat. */
-
-import com.hubitat.app.DeviceWrapper
-import com.hubitat.hub.executor.DeviceExecutor
-import groovy.transform.Field
-import groovy.transform.BaseScript
-
-@Field DeviceWrapper motionSensor
-@BaseScript DeviceExecutor deviceExecutor
-
 /**
  *  Pushcut Notification Driver
  *
