@@ -1,0 +1,39 @@
+{
+  "packageName": "Pushcut",
+  "author": "Travis Tomka",
+  "version": "1.0",
+  "minimumHEVersion": "0.0",
+  "dateReleased": "2021-02-27",
+  "apps": [
+    {
+      "id": "d97b8dc8-7f0d-4aa2-b649-b05325a2b537",
+      "name": "Pushcut",
+      "namespace": "droath",
+      "location": "https://raw.githubusercontent.com/droath/Hubitat/master/App/Pushcut/pushcut-app.groovy",
+      "required": true,
+      "oauth": false,
+      "primary": true,
+      "version": "1.0.0"
+    },
+    {
+      "id": "2a3c8160-3650-4d46-b1fa-5e39dcd76f7a",
+      "name": "Pushcut Notification",
+      "namespace": "droath",
+      "location": "https://raw.githubusercontent.com/droath/Hubitat/master/App/Pushcut/pushcut-notification.groovy",
+      "required": true,
+      "oauth": true,
+      "primary": false,
+      "version": "1.0.0"
+    }
+  ],
+  "drivers": [
+    {
+      "id": "f5d62f02-04a3-436b-bb5f-5e714dffd969",
+      "name": "Pushcut Notification Driver",
+      "namespace": "droath",
+      "location": "https://raw.githubusercontent.com/droath/Hubitat/master/Driver/Pushcut/pushcut-notification-driver.groovy",
+      "required": true,
+      "version": "1.0.0"
+    }
+  ]
+}
