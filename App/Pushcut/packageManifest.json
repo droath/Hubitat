@@ -1,8 +1,8 @@
 {
   "packageName": "Pushcut",
   "author": "Travis Tomka",
-  "version": "1.0",
-  "minimumHEVersion": "0.0",
+  "version": "1.0.0",
+  "minimumHEVersion": "2.1.9",
   "dateReleased": "2021-02-27",
   "apps": [
     {
