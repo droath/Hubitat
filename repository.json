@@ -1,0 +1,13 @@
+{
+  "author": "Travis Tomka",
+  "packages": [
+    {
+      "id": "54de9aff-b389-400a-ade9-2b7056702bb9",
+      "name": "Pushcut",
+      "category": "Utility",
+      "location": "https://raw.githubusercontent.com/droath/Hubitat/master/App/Pushcut/packageManifest.json",
+      "description": "Integrate with the Pushcut ecosystem.",
+      "tags": ["Tools & Utilities", "Notifications"]
+    }
+  ]
+}
