@@ -214,23 +214,31 @@ void uninstalled() {
 }
 
 void initialized() {
+    String label = settings?.label
+
     if (label) {
         app.updateLabel(label)
         app.removeSetting("label")
     }
 
-    if (!hasNotificationDevice()) {
+    if (hasNotificationDevice()) {
+        DeviceWrapper notificationDevice = getNotificationDevice()
+        if (label != notificationDevice.getLabel()) {
+            notificationDevice.setLabel(label)
+        }
+    } else {
         try {
             app.addChildDevice(
                 "droath",
                 "Pushcut Notification Driver",
-                generateNotificationDeviceId(),             [
-                "name" : "Pushcut Notification Driver",
-                "label": label
-            ]
+                generateNotificationDeviceId(),
+                [
+                    name: "Pushcut Notification Driver",
+                    label: label
+                ]
             )
         } catch (Exception exception) {
-           log.error(exception.getMessage())
+            log.error(exception.getMessage())
         }
     }
 

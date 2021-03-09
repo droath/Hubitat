@@ -27,7 +27,7 @@ definition(
     namespace: "droath",
     author: "Travis",
     singleInstance: true,
-    description: "Integrate with the Pushcut ecosystem.",
+    description: "Integrate Hubitat with the Pushcut service.",
     category: "Utility",
     iconUrl: "",
     iconX2Url: "",
@@ -64,6 +64,14 @@ def mainPage() {
                         multiple: true
                     )
                 }
+            }
+            section(title: titleFormat("simple", "Pushcut Debug")) {
+                input(
+                    name: "logEnable",
+                    type: "bool",
+                    title: "Enable log messages",
+                    defaultValue: true
+                )
             }
         } else {
             section() {
