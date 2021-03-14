@@ -1,7 +1,7 @@
 {
   "packageName": "Pushcut",
   "author": "Travis Tomka",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "minimumHEVersion": "2.1.9",
   "documentationLink": "https://github.com/droath/Hubitat/master/App/Pushcut/README.md",
   "communityLink": "",
@@ -15,7 +15,7 @@
       "required": true,
       "oauth": false,
       "primary": true,
-      "version": "1.0.1"
+      "version": "1.0.2"
     },
     {
       "id": "2a3c8160-3650-4d46-b1fa-5e39dcd76f7a",
@@ -24,7 +24,7 @@
       "location": "https://raw.githubusercontent.com/droath/Hubitat/master/App/Pushcut/pushcut-notification.groovy",
       "required": true,
       "oauth": true,
-      "version": "1.0.1"
+      "version": "1.0.2"
     }
   ],
   "drivers": [

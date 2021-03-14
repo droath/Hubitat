@@ -16,6 +16,7 @@
  *
  *    Date        Who             	What
  *    ----        ---             	----
+ *    2021-3-14  Travis   	Support action command arguments.
  *    2021-1-31  Travis   	Original Creation
  */
 
@@ -37,6 +38,11 @@ definition(
 
 mappings {
     path("/devices/:id/:command"){
+        action: [
+            GET: "deviceCommandHandler"
+        ]
+    }
+    path("/devices/:id/:command/:arguments"){
         action: [
             GET: "deviceCommandHandler"
         ]
@@ -176,15 +182,34 @@ def actionInputs(int index) {
 
     if (settings[deviceName]) {
         DeviceWrapper device = settings[deviceName]
-        List options = device.getSupportedCommands()*.name.sort()
+        List commands = device.getSupportedCommands()
+        List options = commands*.name.sort()
 
         input(
             name: "action.${index}.command",
             type: "enum",
             title: "Command",
             required: true,
-            options: options
+            options: options,
+            submitOnChange: true,
         )
+
+        if (settings["action.${index}.command"]) {
+            def actionCommand = settings["action.${index}.command"]
+            def deviceActionCommand = getDeviceCommandInstance(device, actionCommand)
+
+            List<String> actionCommandArgs = deviceActionCommand.getArguments()
+
+            if (actionCommandArgs && !actionCommandArgs.isEmpty()) {
+                actionCommandArgs.eachWithIndex { type, argIndex ->
+                    input(
+                        type: type == "NUMBER" ? "number" : "text",
+                        name: "action.${index}.argument.${argIndex}.value",
+                        title: "Argument ${argIndex + 1}"
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -267,9 +292,12 @@ void deviceCommandHandler() {
         }
         String paramsId = params["id"]
         String paramsCommand = params["command"]
+        List paramsArguments = params["arguments"] ? params["arguments"].split(",") : []
 
         Integer deviceId = Integer.parseInt(paramsId)
-        callActionDeviceCommand(deviceId, paramsCommand)
+        DeviceWrapper device = findActionDevice(deviceId)
+
+        callActionDeviceCommand(device, paramsCommand, paramsArguments)
     } catch (Exception exception) {
         log.error(exception.getMessage())
     }
@@ -317,9 +345,10 @@ void deleteOldActions() {
         oldActionFound = false
 
         if (settings["action.${nextActionIndex}.label"]) {
-            ["label", "device", "command"].each { attribute ->
-                app.removeSetting("action.${nextActionIndex}.${attribute}")
-            }
+            settings.findAll {item -> item.getKey() =~ "^action\\.${nextActionIndex}.+" }.keySet()
+                .each { String settingKey ->
+                    app.removeSetting(settingKey)
+                }
             nextActionIndex++
             oldActionFound = true
         }
@@ -373,6 +402,7 @@ List getActionsPayload() {
             if (definition.label && definition.device && definition.command) {
                 String name = definition.label
                 String command = definition.command
+                List arguments = definition.arguments
 
                 DeviceWrapper device = definition.device
                 Integer deviceId = device.getId().toInteger()
@@ -380,7 +410,7 @@ List getActionsPayload() {
                 actionsPayload.push(
                     buildActionUrlPayload(
                         name,
-                        buildDeviceCommandUrl(deviceId, command)
+                        buildDeviceCommandUrl(deviceId, command, arguments)
                     )
                 )
             }
@@ -390,19 +420,31 @@ List getActionsPayload() {
     return actionsPayload
 }
 
-String buildDeviceCommandUrl(Integer deviceId, String command) {
+String buildDeviceCommandUrl(Integer deviceId, String command, List arguments = []) {
     String urlBase = getFullApiServerUrl()
 
     if (useLocalAPI) {
         urlBase = getFullLocalApiServerUrl()
     }
 
-    return "${urlBase}/devices/${deviceId}/${command}?access_token=${state?.accessToken}"
+    String commandUrl = ([
+        urlBase,
+        "devices",
+        deviceId,
+        command,
+        !arguments.isEmpty() ? arguments.join(",") : null
+    ] - null).join("/")
+
+    return "${commandUrl}?access_token=${state?.accessToken}"
 }
 
-void callActionDeviceCommand(Integer deviceID, String command) {
-    DeviceWrapper device = findActionDevice(deviceID)
+def getDeviceCommandInstance(DeviceWrapper device, String commandName) {
+    return device.getSupportedCommands().find {
+        command -> command.getName() == commandName
+    }
+}
 
+void callActionDeviceCommand(DeviceWrapper device, String command, List args = []) {
     if (!device.hasCommand(command)) {
         throw new RuntimeException(
             sprintf(
@@ -412,7 +454,7 @@ void callActionDeviceCommand(Integer deviceID, String command) {
         )
     }
 
-    device."${command}"()
+    device."${command}"(*args)
 }
 
 DeviceWrapper findActionDevice(Integer deviceId) {
@@ -457,6 +499,13 @@ List getActionDefinitions() {
         if (definition.isEmpty() || definition.size() != 3) {
             continue
         }
+
+        definition.put(
+            "arguments",
+            settings.findAll {setting
+                -> setting.getKey() =~ "^action\\.${index}\\.argument.+"
+            }.values().asList() ?: []
+        )
 
         definitions.push(definition)
     }

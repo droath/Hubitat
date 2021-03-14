@@ -16,6 +16,7 @@
  *
  *    Date        Who             	What
  *    ----        ---             	----
+ *    2021-3-14  Travis   	Fix HTTP exception error
  *    2021-1-31  Travis   	Original Creation
  */
 
@@ -134,8 +135,11 @@ def httpGetRequest(String path) {
                 return resp.getData()
             }
         }
+    } catch (HttpResponseException httpException) {
+        String message = httpException.getResponse().getData()?.error
+        logMessage("error", message)
     } catch (Exception exception) {
-        log.error(exception.message)
+        logMessage("error", exception.message)
     }
 }
 
@@ -160,7 +164,7 @@ def httpPostRequest(String path, Map body = [:]) {
         }
     }
     catch (HttpResponseException httpException) {
-        String message = httpException.getResponse().getData().error
+        String message = httpException.getResponse().getData()?.error
         logMessage("error", message)
     } catch (Exception exception) {
         logMessage("error", exception.message)
